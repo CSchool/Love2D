@@ -1,0 +1,53 @@
+\section{Lua за 15 минут}
+
+\lstset{style=Lua}
+
+Данное пособие является адаптацией статьи ``Learn Lua in 15 Minutes''. 
+Оригинал на английском языке можно найти по адресу: \url{http://tylerneylon.com/a/learn-lua/}.
+
+\subsection{Комментарии}
+
+Комментарии в Lua можно сделать двумя способами:
+
+\begin{lstlisting}
+-- One line comment
+	
+--[[
+    first line
+    seconde line
+--]]
+\end{lstlisting}
+
+Первый способ начинает однострочный комментарий, второй~---~многострочный.
+
+\subsection{Переменные}
+
+Все числовые переменные являются вещественными (double):
+
+\begin{lstlisting}
+number = 42
+another_number = 3.1415
+\end{lstlisting}
+
+Строки в языка Lua являются \emph{неизменяемыми}, то есть нельзя обратиться к индексу строки и поменять символ.
+Объявление сток можно сделать тремя способами:
+
+\begin{lstlisting}
+color = 'black'
+season = "summer"
+huge_string = [[ This is
+	a very-very
+	long string! ]]
+\end{lstlisting}
+
+Переменные могут принимать логическое значение \emph{boolean}: \textbf{true} (истина) или \textbf{ложь}:
+
+\begin{lstlisting}
+to_be_or_not_to_be = true
+\end{lstlisting}
+
+Переменные также могут принимать значение \emph{nil}. Данный тип означает, что значения у переменной \textbf{не существует}!
+
+\begin{lstlisting}
+aliens_exist = nil
+\end{lstlisting}
