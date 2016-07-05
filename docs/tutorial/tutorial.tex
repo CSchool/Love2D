@@ -2,7 +2,7 @@
 
 \lstset{style=Lua}
 
-Данное пособие является адаптацией статьи ``Learn Lua in 15 Minutes''. 
+Данное пособие является адаптацией статьи ``Learn Lua in 15 Minutes'' с некоторыми дополнениями. 
 Оригинал на английском языке можно найти по адресу: \url{http://tylerneylon.com/a/learn-lua/}.
 
 \subsection{Комментарии}
@@ -20,13 +20,23 @@
 
 Первый способ начинает однострочный комментарий, второй~---~многострочный.
 
-\subsection{Переменные}
+\subsection{Переменные (простые типы)}
 
 Все числовые переменные являются вещественными (double):
 
 \begin{lstlisting}
 number = 42
 another_number = 3.1415
+\end{lstlisting}
+
+Над числами можно проводить следующие операции: сложение ($+$), вычитание ($-$), умножение ($*$), деление ($/$), возведение в  степень (\^{}):
+
+\begin{lstlisting}
+add = 5 + 3 -- add = 8
+sub = add - 4 -- sub = 4
+mult = add * sub -- mult = 32
+div = add / sub -- div = 2
+pow = 2^3 -- pow = 8
 \end{lstlisting}
 
 Строки в языка Lua являются \emph{неизменяемыми}, то есть нельзя обратиться к индексу строки и поменять символ.
@@ -40,6 +50,22 @@ huge_string = [[ This is
 	long string! ]]
 \end{lstlisting}
 
+Для соединения строк (\emph{конкатенация} строк) используется оператор $..$:
+
+\begin{lstlisting}
+name = "Petr"
+surname = "Ivanov"
+pupil = name .. " " .. surname -- pupil = "Petr Ivanov"
+\end{lstlisting}
+
+Если при конкатенации строк будут использоваться числовые переменные, то они автоматически будут приведены к строкам:
+
+\begin{lstlisting}
+number = 42
+question = number .. " is good answer for everything!"
+-- question = "42 is good answer for everything!"
+\end{lstlisting}
+
 Переменные могут принимать логическое значение \emph{boolean}: \textbf{true} (истина) или \textbf{ложь}:
 
 \begin{lstlisting}
@@ -51,3 +77,62 @@ to_be_or_not_to_be = true
 \begin{lstlisting}
 aliens_exist = nil
 \end{lstlisting}
+
+\subsection{Условный оператор if}
+
+Условия в языке Lua записываются при помощи условного оператора \emph{if}:
+
+\begin{lstlisting}
+if statement then
+... -- do something if statement == true
+end
+\end{lstlisting}
+
+Оператор проверяет условие \emph{statement} и выполняет операции между ключевыми словами \emph{then} и \emph{end} только в том случае, если \emph{statement}~---~истинен.
+
+Примеры условий:
+
+\begin{lstlisting}
+if a<0 then a = 0 end
+
+if object == "car" then
+  print("This is car!")
+end
+\end{lstlisting}
+
+Можно задавать поведение условного оператора \emph{if} при помощи ключевого слова \emph{else}, в случае, если условие \emph{statement}~---~ложно:
+
+\begin{lstlisting}
+if statement then
+... -- statement == true
+else
+... -- statement == false
+end
+\end{lstlisting}
+
+Пример использования:
+
+\begin{lstlisting}
+if age < 18 then
+  print("You can't go to this movie!")
+else
+  print("Your age is allowed for this movie")
+end
+\end{lstlisting}
+
+Иногда могут понадобится для работы множественные ветвления (\emph{elseif}) условного оператора \emph{if}:
+
+\begin{lstlisting}
+if op == "+" then
+  r = a + b
+elseif op == "-" then
+  r = a - b
+elseif op == "*" then
+  r = a*b
+elseif op == "/" then
+  r = a/b
+else
+  print("Error!")
+end
+\end{lstlisting}
+
