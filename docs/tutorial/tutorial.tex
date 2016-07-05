@@ -78,6 +78,21 @@ to_be_or_not_to_be = true
 aliens_exist = nil
 \end{lstlisting}
 
+\subsection{Операторы отношений}
+
+В языке Lua выделяются следующие операторы отношений, каждый из которых возвращает \emph{true} или \emph{false}:
+
+\begin{lstlisting}
+<   >   <=  >=  ==  ~=
+\end{lstlisting}
+
+Оператор $==$ проверяет равенство аргументов, а оператор \lstinline{~=}~---~неравенство:
+
+\begin{lstlisting}
+print(5 == 6) -- false
+print(52 ~= 0) -- true
+\end{lstlisting}
+
 \subsection{Условный оператор if}
 
 Условия в языке Lua записываются при помощи условного оператора \emph{if}:
@@ -134,5 +149,11 @@ elseif op == "/" then
 else
   print("Error!")
 end
+\end{lstlisting}
+
+Отрицание логического выражения \emph{statement} задается при помощи ключевого слова \emph{not}:
+
+\begin{lstlisting}
+if not end_of_game then ... end
 \end{lstlisting}
 
