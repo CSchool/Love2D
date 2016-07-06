@@ -29,7 +29,8 @@ number = 42
 another_number = 3.1415
 \end{lstlisting}
 
-Над числами можно проводить следующие операции: сложение ($+$), вычитание ($-$), умножение ($*$), деление ($/$), возведение в  степень (\^{}):
+Над числами можно проводить следующие операции: сложение (\lstinline{+}), вычитание (\lstinline{-}), 
+умножение (\lstinline{*}), деление (\lstinline{/}), возведение в  степень (\lstinline{^}):
 
 \begin{lstlisting}
 add = 5 + 3 -- add = 8
@@ -78,9 +79,63 @@ to_be_or_not_to_be = true
 aliens_exist = nil
 \end{lstlisting}
 
+\subsection{Логические операторы}
+
+Существуют следующие логические операторы: \lstinline{and}, \lstinline{or} и \lstinline{not}.
+Все логические операторы предполагают, то \lstinline{false} и \lstinline{nil} представляют собой значение \textbf{false}, 
+а все остальные значения~---~\textbf{true}.
+
+Оператор \lstinline{and} возвращает первый аргумент в том случае, если его значение \emph{false}, 
+в противном случае возвращается второй аргумент.
+Оператор \lstinline{or} возвращает  первый аргумент в том случае, если его значение \emph{true},
+в противном случае возвращается второй аргумент.
+
+\begin{lstlisting}
+print(4 and 5)         -- 5
+print(nil and 13)      -- nil
+print(false and 13)    -- false
+print(4 or 5)          -- 4
+print(false or 5)      -- 5
+\end{lstlisting}
+
+Операторы \lstinline{and} и \lstinline{or} не вычисляют второй аргумент, если в это нет необходимости.
+Например, выражение \lstinline{x = x or v} эквивалентно следующему выражению:
+
+\begin{lstlisting}
+if not x then x = v end
+\end{lstlisting}
+
+То есть, если значение \lstinline{x} не существует, то ставится значение \lstinline{v}.
+
+Ещё один вариант использования условных операторов: реализация тернарного оператора (\lstinline{a ? b : c}). В языке Lua его можно реализовать следующим способом:
+
+\begin{lstlisting}
+a and b or c -- (a and b) or c
+\end{lstlisting}
+
+Пример выбора максимального значения из двух чисел:
+
+\begin{lstlisting}
+max = (x > y) and x or y
+\end{lstlisting}
+
+Сперва вычисляется выражение \lstinline{x > y}. Если оно имеет значение \lstinline{true}, то срабатывает \lstinline{(x > y)    and x} и возвращается \lstinline{x}, так как \lstinline{x}~---~число и всегда равен значению \lstinline{true}. 
+Если же выражение  \lstinline{x > y} имеет значение \lstinline{false}, 
+то выражение \lstinline{(x > y)   and x} возвращает \lstinline{false}, оно сравнивается с \lstinline{y}, 
+и оператор \lstinline{or} возвращает значение \lstinline{y}.
+
+Оператор \lstinline{not} всегда возвращает \lstinline{true} или \lstinline{false}:
+
+\begin{lstlisting}
+print(not nil)      -- true
+print(not false)    -- true
+print(not 0)        -- false
+print(not not nil)  -- false
+\end{lstlisting}
+
 \subsection{Операторы отношений}
 
-В языке Lua выделяются следующие операторы отношений, каждый из которых возвращает \emph{true} или \emph{false}:
+В языке Lua выделяются следующие операторы отношений, каждый из которых возвращает \lstinline{true} или \lstinline{false}:
 
 \begin{lstlisting}
 <   >   <=  >=  ==  ~=
@@ -95,7 +150,7 @@ print(52 ~= 0) -- true
 
 \subsection{Условный оператор if}
 
-Условия в языке Lua записываются при помощи условного оператора \emph{if}:
+Условия в языке Lua записываются при помощи условного оператора \lstinline{if}:
 
 \begin{lstlisting}
 if statement then
@@ -103,19 +158,19 @@ if statement then
 end
 \end{lstlisting}
 
-Оператор проверяет условие \emph{statement} и выполняет операции между ключевыми словами \emph{then} и \emph{end} только в том случае, если \emph{statement}~---~истинен.
+Оператор проверяет условие \emph{statement} и выполняет операции между ключевыми словами \lstinline{then} и \lstinline{end} только в том случае, если \emph{statement}~---~истинен.
 
 Примеры условий:
 
 \begin{lstlisting}
-if a<0 then a = 0 end
+if a < 0 then a = 0 end
 
 if object == "car" then
   print("This is car!")
 end
 \end{lstlisting}
 
-Можно задавать поведение условного оператора \emph{if} при помощи ключевого слова \emph{else}, в случае, если условие \emph{statement}~---~ложно:
+Можно задавать поведение условного оператора \lstinline{if} при помощи ключевого слова \lstinline{else}, в случае, если условие \emph{statement}~---~ложно:
 
 \begin{lstlisting}
 if statement then
@@ -135,7 +190,7 @@ else
 end
 \end{lstlisting}
 
-Иногда могут понадобится для работы множественные ветвления (\emph{elseif}) условного оператора \emph{if}:
+Иногда могут понадобится для работы множественные ветвления (\lstinline{elseif}) условного оператора \lstinline{if}:
 
 \begin{lstlisting}
 if op == "+" then
@@ -151,9 +206,14 @@ else
 end
 \end{lstlisting}
 
-Отрицание логического выражения \emph{statement} задается при помощи ключевого слова \emph{not}:
+Отрицание логического выражения \emph{statement} задается при помощи ключевого слова \lstinline{not}:
 
 \begin{lstlisting}
 if not end_of_game then ... end
 \end{lstlisting}
 
+Выражение \emph{statement} может содержать в себе сложные логические выражения:
+
+\begin{lstlisting}
+if age >= 14 and age <= 18 then ... end
+\end{lstlisting}
