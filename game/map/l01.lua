@@ -39,9 +39,7 @@ return {
             offsetx = 0,
             offsety = 0,
             draworder = "index",
-            properties = {
-              ["collidable"] = "true"
-            },
+            properties = {},
             objects = {}
           }
         }
@@ -129,7 +127,7 @@ return {
           rotation = 0,
           visible = false,
           properties = {
-            ["collidable"] = "true"
+            ["collidable"] = true
           }
         },
         {
@@ -144,7 +142,7 @@ return {
           rotation = 0,
           visible = false,
           properties = {
-            ["collidable"] = "true"
+            ["collidable"] = true
           }
         }
       }
@@ -240,7 +238,7 @@ return {
           rotation = 0,
           visible = false,
           properties = {
-            ["collidable"] = "true"
+            ["collidable"] = true
           }
         },
         {
@@ -291,7 +289,7 @@ return {
           width = 16,
           height = 16,
           rotation = 0,
-          visible = false,
+          visible = true,
           properties = {}
         }
       }
