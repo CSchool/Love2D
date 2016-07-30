@@ -12,6 +12,8 @@ function love.load()
   -- данная строчка необходима для отладки игры в среде ZeroBrane!
   if arg[#arg] == "-debug" then require("mobdebug").start() end
   
+  io.stdout:setvbuf("no") -- для вывода print сразу же в output
+  
   -- получаем размер окна
   windowWidth  = love.graphics.getWidth()
   windowHeight = love.graphics.getHeight()
@@ -25,11 +27,11 @@ function love.load()
   map:bump_init(world)
   
   -- инициализация игрока на уровне
-  mario = Player:new('mario', 'sprites/mario.png', world) -- вызывается функция initialize
+  mario = Player:new('mario', 'sprites/mario_low_anim.png', world) -- вызывается функция initialize
   mario:setStartPosition(map.objects)
   
   -- добавляем слой для отрисовки
-  map:addCustomLayer('spriteLayer', 3);
+  map:addCustomLayer('spriteLayer', 2);
   
   local spriteLayer = map.layers.spriteLayer;
   
@@ -42,13 +44,16 @@ function love.load()
   end
 
   function spriteLayer:draw()
-    love.graphics.draw(mario.image.sprite, mario.pos.x, mario.pos.y, 0, 1, 1, mario.image.offset_x, mario.image.offset_y)
+    -- отрисовка текущей анимации
+    mario.animations[mario.currentAnimation]:draw(mario.animations.sprite, mario.pos.x, mario.pos.y)
+    
     love.graphics.print('(' .. mario.pos.x .. ', ' .. mario.pos.y .. ')', 20, 20)
   end
 end
 
 -- отрисовка состояния игры на текущий момент времени
 function love.draw()
+  love.graphics.scale(1.5)
   map:draw() -- отрисовка мира
   --map:bump_draw(world) -- отрисовка границ объектов
 end

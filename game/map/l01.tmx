@@ -41,12 +41,12 @@
 </data>
  </layer>
  <objectgroup name="Ground" visible="0">
-  <object id="3" x="0" y="192" width="160" height="16" visible="0">
+  <object id="3" name="ground1" x="0" y="192" width="160" height="16" visible="0">
    <properties>
     <property name="collidable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="5" x="192" y="192" width="320" height="16" visible="0">
+  <object id="5" name="ground2" x="192" y="192" width="320" height="16" visible="0">
    <properties>
     <property name="collidable" type="bool" value="true"/>
    </properties>
@@ -88,13 +88,21 @@
 </data>
  </layer>
  <objectgroup name="PipeObject" visible="0">
-  <object id="16" x="320" y="160" width="32" height="32" visible="0">
+  <object id="16" name="pipe1" x="320" y="160" width="32" height="32" visible="0">
    <properties>
     <property name="collidable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="17" x="384" y="144" width="32" height="48" visible="0"/>
-  <object id="19" x="448" y="160" width="32" height="32" visible="0"/>
+  <object id="17" name="pipe2" x="384" y="144" width="32" height="48" visible="0">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="19" name="pipe3" x="448" y="160" width="32" height="32" visible="0">
+   <properties>
+    <property name="collidable" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="PlayerSpawn" visible="0">
   <object id="24" name="playerSpawn" x="16" y="176" width="16" height="16"/>

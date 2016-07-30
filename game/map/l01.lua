@@ -117,7 +117,7 @@ return {
       objects = {
         {
           id = 3,
-          name = "",
+          name = "ground1",
           type = "",
           shape = "rectangle",
           x = 0,
@@ -132,7 +132,7 @@ return {
         },
         {
           id = 5,
-          name = "",
+          name = "ground2",
           type = "",
           shape = "rectangle",
           x = 192,
@@ -228,7 +228,7 @@ return {
       objects = {
         {
           id = 16,
-          name = "",
+          name = "pipe1",
           type = "",
           shape = "rectangle",
           x = 320,
@@ -243,7 +243,7 @@ return {
         },
         {
           id = 17,
-          name = "",
+          name = "pipe2",
           type = "",
           shape = "rectangle",
           x = 384,
@@ -252,11 +252,13 @@ return {
           height = 48,
           rotation = 0,
           visible = false,
-          properties = {}
+          properties = {
+            ["collidable"] = true
+          }
         },
         {
           id = 19,
-          name = "",
+          name = "pipe3",
           type = "",
           shape = "rectangle",
           x = 448,
@@ -265,7 +267,9 @@ return {
           height = 32,
           rotation = 0,
           visible = false,
-          properties = {}
+          properties = {
+            ["collidable"] = true
+          }
         }
       }
     },
