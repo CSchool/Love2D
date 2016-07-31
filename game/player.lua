@@ -31,9 +31,11 @@ function Player:initialize(name, sprite, world)
     0, 0, 1
   )
   
-  self.animations.jumping = anim8.newAnimation(self.animations.grid(6, 1), 0.1)
-  
   -- копируем фрейм и отзеркаливаем его по оси Х, тем самым заставляем художников меньше рисовать
+  self.animations.jumpingRight = anim8.newAnimation(self.animations.grid(6, 1), 0.1)
+  self.animations.jumpingLeft = self.animations.jumpingRight:clone():flipH()
+  
+  
   self.animations.stayingRight = anim8.newAnimation(self.animations.grid(1, 1), 0.1)
   self.animations.stayingLeft = self.animations.stayingRight:clone():flipH() 
   
@@ -54,6 +56,10 @@ function Player:initialize(name, sprite, world)
     yVelocity = 0,
   }
   
+  self.jumping = {
+    isJumping = false, -- флажок на анимацию прыжка
+    direction = 'Right' -- в каком направлении прыгаем
+  }
   
   self.world = world
 end
@@ -88,22 +94,28 @@ function Player:update(dt)
     self.pos.y = self.pos.y - self.pos.yVelocity * dt
   end
   
+  -- проверка клавиатуры
   -- Двигаем персонажа вверх
-  if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
-      dy = -speed * dt
+  if (love.keyboard.isDown("w") or love.keyboard.isDown("up") or love.keyboard.isDown("space")) and not self.jumping.isJumping then
+    self.pos.yVelocity = self.pos.yVelocity + Physics.static.jump_height
+    self.jumping.isJumping = true
+    self.jumping.direction = self.pos.direction:gsub("^%l", string.upper) -- делаем заглавную первую букву
   end
+
 
   -- Двигаем персонажа вниз
   if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
-      dy = speed * dt
+    -- необходимо для большого Марио
   end
 
   -- Двигаем персонажа влево
   if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
       dx = -speed * dt
       if self.pos.direction == "right" then
-        -- задаем анимацию поворота
-        self.pos.direction = "left"
+        -- задаем направление поворота, если не находимся в прыжке
+        if not self.jumping.isJumping then 
+          self.pos.direction = "left"
+        end
       else
         -- задаем анимацию бега
         self.currentAnimation = 'runningLeft'
@@ -115,8 +127,10 @@ function Player:update(dt)
       dx = speed * dt
       
       if self.pos.direction == "left" then
-        -- задаем анимацию поворота
-        self.pos.direction = "right"
+        -- задаем направление поворота, если не находимся в прыжке
+        if not self.jumping.isJumping then
+          self.pos.direction = "right"
+        end
       else
         -- задаем анимацию бега
         self.currentAnimation = 'runningRight'
@@ -124,38 +138,45 @@ function Player:update(dt)
       end
   end
   
-  -- todo: поправить анимацию прыжка и направление
-  if love.keyboard.isDown("space") and self.pos.yVelocity == 0 then
-    self.currentAnimation = 'jumping'
-    self.pos.yVelocity = self.pos.yVelocity + Physics.static.jump_height
-  end
-  
+  -- специальные проверки на анимации игрока - направление в стоячем состоянии + прыжок 
   if self.currentAnimation == 'stayingRight' and self.pos.direction == 'left' then
     self.currentAnimation = 'stayingLeft'
+  end
+  
+  if self.jumping.isJumping then
+    self.currentAnimation = 'jumping' .. self.jumping.direction
   end
   
   -- пытаемся подвинуть игрока
   local collisions = {}
   local x, y = self.pos.x, self.pos.y
   
+  -- передвигаем 
   self.pos.x, self.pos.y, collisions = self.world:move(self, x + dx, y + dy)
   
-  -- если нет столкновения с землей - тянет игрока вниз 
-  -- (todo: все же проверять стоим ли мы на земле, и только потом применять гравитацию)
-  -- (todo: и убрать хождения по стенам :))
-  if #collisions == 0 then
-    self.pos.yVelocity = self.pos.yVelocity - Physics.static.gravity * dt
-  end
+
+  
+  local isFloor = false -- есть ли коллизии с полом
   
   -- обрабатываем столкновения с предметами
   for i,v in pairs(collisions) do
     --print(v.type, v.otherRect.x, v.otherRect.y, v.otherRect.w, v.otherRect.h)
     
-    if v.item == self and v.normal.y == -1 then
+    -- если пол, мы его касаемся нормально, и у нас есть вертикально ускорение, то стоит прекратить падение
+    if v.item == self and v.normal.y == -1 and self.pos.yVelocity ~= 0 then
       self.pos.y = v.otherRect.y - 16
       self.pos.yVelocity = 0
+      isFloor = true
     end
     
+  end
+  
+  -- если нет столкновения с землей - тянем игрока вниз, иначе говорим, что прыжка нет
+  -- (todo: убрать хождения по стенам :))
+  if not isFloor then
+    self.pos.yVelocity = self.pos.yVelocity - Physics.static.gravity * dt
+  elseif isFloor and self.jumping.isJumping == true then
+    self.jumping.isJumping = false
   end
     
   -- рисуем анимацию
