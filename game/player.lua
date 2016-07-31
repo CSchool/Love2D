@@ -4,7 +4,10 @@ local anim8 = require 'libs/anim8/anim8'
 local Player = class('Player')
 local Physics = require('physics')
 
-Player.static.turnDurationLimit = 10
+Player.static.turnDurationLimit = 10 -- not used yet
+Player.static.speedLimit = 100 -- maximum speed
+Player.static.speedDefault = 60 -- minimum speed
+Player.static.speedDelta = 50 -- delta speed update
 Player.static.size = 16
 
 -- инициализация объекта Player
@@ -48,6 +51,8 @@ function Player:initialize(name, sprite, world)
   
   self.currentAnimation = 'stayingRight'
   self.turnDuration = 0
+  
+  self.speed = Player.static.speedDefault
     
   self.pos = {
     x = 0, 
@@ -81,8 +86,9 @@ end
 
 -- обновление игрока
 function Player:update(dt)
-  local speed = 90
-  
+
+  --print('speed ' .. self.speed)
+
   local dx,dy = 0,0
   
   -- изначальная анимация
@@ -111,7 +117,8 @@ function Player:update(dt)
 
   -- Двигаем персонажа влево
   if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
-      dx = -speed * dt
+      dx = -self.speed * dt
+      
       if self.pos.direction == "right" then
         -- задаем направление поворота, если не находимся в прыжке
         if not self.jumping.isJumping then 
@@ -121,11 +128,13 @@ function Player:update(dt)
         -- задаем анимацию бега
         self.currentAnimation = 'runningLeft'
       end
+      
+      self:speedChange(dt)
   end
 
   -- Двигаем персонажа вправо
   if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
-      dx = speed * dt
+      dx = self.speed * dt
       
       if self.pos.direction == "left" then
         -- задаем направление поворота, если не находимся в прыжке
@@ -137,6 +146,8 @@ function Player:update(dt)
         self.currentAnimation = 'runningRight'
         self.turnDuration = 0
       end
+      
+      self:speedChange(dt)
   end
   
   -- специальные проверки на анимации игрока - направление в стоячем состоянии + прыжок 
@@ -146,6 +157,12 @@ function Player:update(dt)
   
   if self.jumping.isJumping then
     self.currentAnimation = 'jumping' .. self.jumping.direction
+  end
+  
+  -- если стоим на земле - обнуляем текущую скорость
+  if self.currentAnimation:find('staying') and self.speed ~= Player.static.speedDefault then
+    print('staying')
+    self.speed = Player.static.speedDefault
   end
   
   -- пытаемся подвинуть игрока
@@ -185,5 +202,15 @@ function Player:update(dt)
   
 end
 
+-- изменение скорости
+function Player:speedChange(dt)
+  if not self.jumping.isJumping then
+    if self.speed < Player.static.speedLimit then
+      self.speed = self.speed + Player.static.speedDelta * dt
+    elseif self.speed > Player.static.speedLimit then
+      self.speed = Player.static.speedLimit
+    end
+  end
+end
 
 return Player
