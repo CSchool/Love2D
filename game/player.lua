@@ -90,13 +90,14 @@ function Player:update(dt)
   
   -- проверяем падаем ли мы?
   if self.pos.yVelocity ~= 0 then
-    --print(self.pos.yVelocity)
     self.pos.y = self.pos.y - self.pos.yVelocity * dt
   end
   
   -- проверка клавиатуры
   -- Двигаем персонажа вверх
-  if (love.keyboard.isDown("w") or love.keyboard.isDown("up") or love.keyboard.isDown("space")) and not self.jumping.isJumping then
+  if (love.keyboard.isDown("w") or love.keyboard.isDown("up") or love.keyboard.isDown("space")) 
+    and not self.jumping.isJumping and self.pos.yVelocity == 0
+  then
     self.pos.yVelocity = self.pos.yVelocity + Physics.static.jump_height
     self.jumping.isJumping = true
     self.jumping.direction = self.pos.direction:gsub("^%l", string.upper) -- делаем заглавную первую букву
