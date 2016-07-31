@@ -4,8 +4,13 @@ local Player = require "player"
 local bump = require "libs/bump/bump"
 local sti = require "libs/sti"
 
+local Camera = require "libs/camera/camera"
 
 local mario = {}
+
+--[[ original resolution:
+ 256 × 224
+ --]]
 
 -- инициализация приложения начинается в данной процедуре 
 function love.load()
@@ -30,6 +35,11 @@ function love.load()
   mario = Player:new('mario', 'sprites/mario_low_anim.png', world) -- вызывается функция initialize
   mario:setStartPosition(map.objects)
   
+  -- создаем камеру
+  camera = Camera(mario.pos.x + 7 * Player.static.size, mario.pos.y - 4 * Player.static.size, love.graphics.getWidth() / 256)
+  camera.smoother = Camera.smooth.damped(10)
+  
+  
   -- добавляем слой для отрисовки
   map:addCustomLayer('spriteLayer', 2);
   
@@ -53,12 +63,15 @@ end
 
 -- отрисовка состояния игры на текущий момент времени
 function love.draw()
-  love.graphics.scale(1.5)
+  camera:attach()
   map:draw() -- отрисовка мира
+  camera:detach() 
   --map:bump_draw(world) -- отрисовка границ объектов
 end
 
 -- обновление игры - dt - сколько времени прошло после предыдущего обновления (очень маленькое значение)
 function love.update(dt)
   map:update(dt)
+  
+  camera:lockX(mario.pos.x + 7 * Player.static.size)
 end
