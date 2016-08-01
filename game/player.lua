@@ -2,7 +2,7 @@ local class = require 'libs/middleclass/middleclass'
 local anim8 = require 'libs/anim8/anim8'
 
 local Player = class('Player')
-local Physics = require('physics')
+local World = require('world')
 
 Player.static.turnDurationLimit = 10 -- not used yet
 Player.static.speedLimit = 100 -- maximum speed
@@ -11,7 +11,7 @@ Player.static.speedDelta = 50 -- delta speed update
 Player.static.size = 16
 
 -- инициализация объекта Player
-function Player:initialize(name, sprite, world)
+function Player:initialize(name, sprite, collisionWorld)
   self.name = name
   
   -- инициализация анимаций
@@ -19,6 +19,7 @@ function Player:initialize(name, sprite, world)
   
   -- выделяем новое изображение в памяти
   self.animations.sprite = love.graphics.newImage(sprite)
+  self.animations.sprite:setFilter("nearest", "nearest")
   
   --[[
     Создаем таблицу фреймов, в которой будут хранится анимации
@@ -66,7 +67,7 @@ function Player:initialize(name, sprite, world)
     direction = 'Right' -- в каком направлении прыгаем
   }
   
-  self.world = world
+  self.collisionWorld = collisionWorld
 end
 
 -- указываем, где находится игрок в начале игры
@@ -77,7 +78,10 @@ function Player:setStartPosition(objects)
       self.pos = {x = object.x, y = object.y, direction = "right", yVelocity = 0}
       
       -- добавляем игрока в мир (маленький марио - 16х16)
-      self.world:add(self, self.pos.x, self.pos.y, Player.static.size, Player.static.size)
+      self.collisionWorld:add(
+        self, self.pos.x, self.pos.y, 
+        Player.static.size, Player.static.size
+      )
       
       break
     end
@@ -86,8 +90,6 @@ end
 
 -- обновление игрока
 function Player:update(dt)
-
-  --print('speed ' .. self.speed)
 
   local dx,dy = 0,0
   
@@ -104,7 +106,7 @@ function Player:update(dt)
   if (love.keyboard.isDown("w") or love.keyboard.isDown("up") or love.keyboard.isDown("space")) 
     and not self.jumping.isJumping and self.pos.yVelocity == 0
   then
-    self.pos.yVelocity = self.pos.yVelocity + Physics.static.jump_height
+    self.pos.yVelocity = self.pos.yVelocity + World.static.jump_height
     self.jumping.isJumping = true
     self.jumping.direction = self.pos.direction:gsub("^%l", string.upper) -- делаем заглавную первую букву
   end
@@ -161,7 +163,6 @@ function Player:update(dt)
   
   -- если стоим на земле - обнуляем текущую скорость
   if self.currentAnimation:find('staying') and self.speed ~= Player.static.speedDefault then
-    print('staying')
     self.speed = Player.static.speedDefault
   end
   
@@ -170,7 +171,7 @@ function Player:update(dt)
   local x, y = self.pos.x, self.pos.y
   
   -- передвигаем 
-  self.pos.x, self.pos.y, collisions = self.world:move(self, x + dx, y + dy)
+  self.pos.x, self.pos.y, collisions = self.collisionWorld:move(self, x + dx, y + dy)
   
 
   
@@ -192,7 +193,7 @@ function Player:update(dt)
   -- если нет столкновения с землей - тянем игрока вниз, иначе говорим, что прыжка нет
   -- (todo: убрать хождения по стенам :))
   if not isFloor then
-    self.pos.yVelocity = self.pos.yVelocity - Physics.static.gravity * dt
+    self.pos.yVelocity = self.pos.yVelocity - World.static.gravity * dt
   elseif isFloor and self.jumping.isJumping == true then
     self.jumping.isJumping = false
   end

@@ -5,6 +5,7 @@ local bump = require "libs/bump/bump"
 local sti = require "libs/sti"
 
 local Camera = require "libs/camera/camera"
+local World = require 'world'
 
 local mario = {}
 
@@ -20,8 +21,11 @@ function love.load()
   io.stdout:setvbuf("no") -- для вывода print сразу же в output
   
   -- получаем размер окна
-  windowWidth  = love.graphics.getWidth()
-  windowHeight = love.graphics.getHeight()
+  windowWidth, windowHeight = love.graphics.getDimensions()
+  local yCoef = windowHeight / 208
+  
+  print(windowWidth, windowHeight)
+  
   
   -- создание физического мира
   world = bump.newWorld(16)
@@ -35,10 +39,23 @@ function love.load()
   mario = Player:new('mario', 'sprites/mario_low_anim.png', world) -- вызывается функция initialize
   mario:setStartPosition(map.objects)
   
+  
   -- создаем камеру
-  camera = Camera(mario.pos.x + 7 * Player.static.size, mario.pos.y - 4 * Player.static.size, love.graphics.getWidth() / 256)
+  camera = Camera()
   camera.smoother = Camera.smooth.damped(10)
   
+  camera:zoom(yCoef)
+  
+  local borderX, borderY = camera:worldCoords(0, 0)
+  camera:move(-borderX, -borderY)
+  
+  local camPosX, camPosY = camera:position()
+  World.static.leftBorder = {x = camPosX, y = camPosY}
+  
+  -- test information
+  print(camPosX, camPosY)
+  print(camera:cameraCoords(mario.pos.x, mario.pos.y))
+  print(camera:worldCoords(mario.pos.x, mario.pos.y))
   
   -- добавляем слой для отрисовки
   map:addCustomLayer('spriteLayer', 2);
@@ -57,7 +74,10 @@ function love.load()
     -- отрисовка текущей анимации
     mario.animations[mario.currentAnimation]:draw(mario.animations.sprite, mario.pos.x, mario.pos.y)
     
-    love.graphics.print('(' .. mario.pos.x .. ', ' .. mario.pos.y .. ')', 20, 20)
+    love.graphics.setPointSize(5)
+    love.graphics.points(camera:position())
+    
+    
   end
 end
 
@@ -73,5 +93,11 @@ end
 function love.update(dt)
   map:update(dt)
   
-  camera:lockX(mario.pos.x + 7 * Player.static.size)
+  camera:lockX(mario.pos.x)
+  
+  local x,y = camera:position()
+  
+  if (x < World.static.leftBorder.x) then
+    camera:lookAt(World.static.leftBorder.x, World.static.leftBorder.y)
+  end
 end

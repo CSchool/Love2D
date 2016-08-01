@@ -225,6 +225,7 @@ function Map:setLayer(layer, path)
 
 	layer.x      = (layer.x or 0) + layer.offsetx + self.offsetx
 	layer.y      = (layer.y or 0) + layer.offsety + self.offsety
+  
 	layer.update = function(dt) return end
 
 	if layer.type == "tilelayer" then
@@ -355,7 +356,7 @@ function Map:setSpriteBatches(layer)
 	local endY       = layer.height
 	local incrementX = 1
 	local incrementY = 1
-
+  
 	-- Determine order to add tiles to sprite batch
 	-- Defaults to right-down
 	if self.renderorder == "right-up" then
