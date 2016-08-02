@@ -38,19 +38,19 @@
 </data>
  </layer>
  <objectgroup name="Ground" visible="0">
-  <object id="2" name="Ground1" x="16" y="176" width="160" height="32" visible="0">
+  <object id="2" name="Ground1" x="16" y="176" width="160" height="32">
    <properties>
     <property name="collidable" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="4" name="Ground2" x="224" y="176" width="448" height="32" visible="0">
+  <object id="4" name="Ground2" x="224" y="176" width="448" height="32">
    <properties>
     <property name="collidable" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup name="PlayerSpawn" visible="0">
-  <object id="6" name="playerSpawn" x="32" y="160" width="16" height="16" visible="0"/>
+  <object id="6" name="playerSpawn" x="32" y="160" width="16" height="16"/>
  </objectgroup>
  <layer name="PipeLayout" width="241" height="13">
   <data encoding="csv">

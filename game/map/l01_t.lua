@@ -110,7 +110,7 @@ return {
           width = 160,
           height = 32,
           rotation = 0,
-          visible = false,
+          visible = true,
           properties = {
             ["collidable"] = true
           }
@@ -125,7 +125,7 @@ return {
           width = 448,
           height = 32,
           rotation = 0,
-          visible = false,
+          visible = true,
           properties = {
             ["collidable"] = true
           }
@@ -152,7 +152,7 @@ return {
           width = 16,
           height = 16,
           rotation = 0,
-          visible = false,
+          visible = true,
           properties = {}
         }
       }

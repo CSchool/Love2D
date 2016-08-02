@@ -55,16 +55,25 @@ function Player:initialize(name, sprite, collisionWorld)
   
   self.speed = Player.static.speedDefault
     
+  -- позиция игрока
   self.pos = {
     x = 0, 
     y = 0, 
-    direction = "right",
-    yVelocity = 0,
+    direction = "right", -- направление движения
+    yVelocity = 0, -- ускорение по оси оY
   }
   
   self.jumping = {
     isJumping = false, -- флажок на анимацию прыжка
     direction = 'Right' -- в каком направлении прыгаем
+  }
+  
+  -- интерфейс наверху
+  self.hud = {
+    score = 0,
+    time = 400, -- в секундах
+    level = '1-1',
+    coins = 0
   }
   
   self.collisionWorld = collisionWorld
@@ -90,6 +99,8 @@ end
 
 -- обновление игрока
 function Player:update(dt)
+
+  self.hud.time = self.hud.time - dt
 
   local dx,dy = 0,0
   
@@ -157,6 +168,7 @@ function Player:update(dt)
     self.currentAnimation = 'stayingLeft'
   end
   
+  
   if self.jumping.isJumping then
     self.currentAnimation = 'jumping' .. self.jumping.direction
   end
@@ -166,14 +178,13 @@ function Player:update(dt)
     self.speed = Player.static.speedDefault
   end
   
+  
   -- пытаемся подвинуть игрока
   local collisions = {}
   local x, y = self.pos.x, self.pos.y
   
   -- передвигаем 
   self.pos.x, self.pos.y, collisions = self.collisionWorld:move(self, x + dx, y + dy)
-  
-
   
   local isFloor = false -- есть ли коллизии с полом
   

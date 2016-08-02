@@ -7,7 +7,11 @@ local sti = require "libs/sti"
 local Camera = require "libs/camera/camera"
 local World = require 'world'
 
+local font
 local mario = {}
+
+-- ссылки на функции
+local ceil = math.ceil
 
 --[[ original resolution:
  256 × 224
@@ -57,6 +61,11 @@ function love.load()
   print(camera:cameraCoords(mario.pos.x, mario.pos.y))
   print(camera:worldCoords(mario.pos.x, mario.pos.y))
   
+  -- загружаем шрифт
+  local fontSize = windowWidth == 800 and 14 or 16 -- тернарый оператор в действии
+  font = love.graphics.newFont("fonts/emulogic.ttf", fontSize)
+  love.graphics.setFont(font)
+  
   -- добавляем слой для отрисовки
   map:addCustomLayer('spriteLayer', 2);
   
@@ -65,6 +74,7 @@ function love.load()
   spriteLayer.sprites = {
     player = mario
   }
+  
   
   function spriteLayer:update(dt)
     self.sprites.player:update(dt)
@@ -77,7 +87,6 @@ function love.load()
     love.graphics.setPointSize(5)
     love.graphics.points(camera:position())
     
-    
   end
 end
 
@@ -88,6 +97,47 @@ function love.draw()
   map:setDrawRange(x, y, windowWidth, windowHeight)
   map:draw() -- отрисовка мира
   camera:detach() 
+  
+  -- отрисовка интерфейса
+  local yOffset = windowHeight * 0.05
+  local startOffset = windowWidth * 0.05
+  
+  -- вывод интерфейса на экран
+  local scoreString = string.format("%06d", mario.hud.score)
+  local scoreStringWidth = font:getWidth(scoreString)
+  
+  local scoreLabel = "Score"
+  local scoreLabelWidth = font:getWidth(scoreLabel)
+  
+  local scoreDiff = (scoreStringWidth - scoreLabelWidth) / 2
+  
+  -- выводим на экран счет
+  love.graphics.print(scoreLabel, startOffset + scoreDiff, yOffset)
+  love.graphics.print(string.format("%06d", mario.hud.score), startOffset, yOffset * 2)
+  
+  -- выводим количество монеток
+  love.graphics.print('x ' .. mario.hud.coins, startOffset * 7, yOffset * 2)
+  
+  local worldLabel = 'World'
+  local worldLabelWidth = font:getWidth(worldLabel)
+  
+  local marioWorld = mario.hud.level
+  local marioWorldWidth = font:getWidth(marioWorld)
+  
+  local worldDiff = (worldLabelWidth - marioWorldWidth) / 2
+  
+  -- выводим текущий мир (уровень)
+  love.graphics.print('World', startOffset * 12, yOffset)
+  love.graphics.print(marioWorld, startOffset * 12 + worldDiff, yOffset * 2)
+  
+  local timeLabel = 'Time'
+  local marioTime = ceil(mario.hud.time)
+  local diff = (font:getWidth(timeLabel) - font:getWidth(marioTime)) / 2
+  
+  -- выводим текущее время
+  love.graphics.print('Time', startOffset * 17, yOffset)
+  love.graphics.print(ceil(marioTime), startOffset * 17 + diff, yOffset * 2)
+  
   --map:bump_draw(world) -- отрисовка границ объектов
 end
 
