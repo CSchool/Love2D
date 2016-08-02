@@ -196,6 +196,7 @@ function Player:update(dt)
     if v.type == 'cross' then
       v.other.isTouched = true -- отмечаем, что игрок коснулся монетки
       self.hud.score = self.hud.score + 200 
+      self.hud.coins = self.hud.coins + 1
     end
     
     -- если пол, мы его касаемся нормально, и у нас есть вертикально ускорение, то стоит прекратить падение

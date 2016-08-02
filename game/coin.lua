@@ -26,7 +26,7 @@ function Coin:initialize(obj, collisionWorld)
     )
   end
   
-  self.animation.flip = anim8.newAnimation(Coin.static.grid('1-3', 1), 0.6)
+  self.animation.flip = anim8.newAnimation(Coin.static.grid('1-3', 1), {0.6, 0.2, 0.2})
   
   collisionWorld:add(
     self, self.pos.x, self.pos.y, 
