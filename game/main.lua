@@ -31,7 +31,7 @@ function love.load()
   world = bump.newWorld(16)
     
   -- загрузка карт (с плагином bump - для определения коллизий)
-  map = sti("map/l01.lua", { "bump" })
+  map = sti("map/l01_t.lua", { "bump" })
   
   map:bump_init(world)
   
