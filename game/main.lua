@@ -46,7 +46,7 @@ function love.load()
   
   camera:zoom(yCoef)
   
-  local borderX, borderY = camera:worldCoords(0, 0)
+  local borderX, borderY = camera:worldCoords(-16 * yCoef, 0)
   camera:move(-borderX, -borderY)
   
   local camPosX, camPosY = camera:position()
