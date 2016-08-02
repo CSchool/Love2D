@@ -84,6 +84,8 @@ end
 -- отрисовка состояния игры на текущий момент времени
 function love.draw()
   camera:attach()
+  local x, y = camera:position()
+  map:setDrawRange(x, y, windowWidth, windowHeight)
   map:draw() -- отрисовка мира
   camera:detach() 
   --map:bump_draw(world) -- отрисовка границ объектов
