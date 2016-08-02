@@ -184,7 +184,7 @@ function Player:update(dt)
   local x, y = self.pos.x, self.pos.y
   
   -- передвигаем 
-  self.pos.x, self.pos.y, collisions = self.collisionWorld:move(self, x + dx, y + dy)
+  self.pos.x, self.pos.y, collisions = self.collisionWorld:move(self, x + dx, y + dy, self.collision)
   
   local isFloor = false -- есть ли коллизии с полом
   
@@ -192,8 +192,14 @@ function Player:update(dt)
   for i,v in pairs(collisions) do
     --print(v.type, v.otherRect.x, v.otherRect.y, v.otherRect.w, v.otherRect.h)
     
+    -- проверяем монетки
+    if v.type == 'cross' then
+      v.other.isTouched = true -- отмечаем, что игрок коснулся монетки
+      self.hud.score = self.hud.score + 200 
+    end
+    
     -- если пол, мы его касаемся нормально, и у нас есть вертикально ускорение, то стоит прекратить падение
-    if v.item == self and v.normal.y == -1 and self.pos.yVelocity ~= 0 then
+    if v.type == 'slide' and v.item == self and v.normal.y == -1 and self.pos.yVelocity ~= 0 then
       self.pos.y = v.otherRect.y - 16
       self.pos.yVelocity = 0
       isFloor = true
@@ -222,6 +228,14 @@ function Player:speedChange(dt)
     elseif self.speed > Player.static.speedLimit then
       self.speed = Player.static.speedLimit
     end
+  end
+end
+
+function Player:collision(item, other)
+  if item.className == "coin" then 
+    return 'cross' -- просто обычное пересечение, не нужно регистрировать коллизию
+  else
+    return 'slide' -- а это земля, трубы и всё остальное
   end
 end
 

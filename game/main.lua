@@ -1,5 +1,6 @@
 -- объявления зависимостей
 local Player = require "player"
+local Coin = require "coin"
 
 local bump = require "libs/bump/bump"
 local sti = require "libs/sti"
@@ -9,6 +10,9 @@ local World = require 'world'
 
 local font
 local mario = {}
+
+local windowWidth, windowHeight
+local yCoef
 
 -- ссылки на функции
 local ceil = math.ceil
@@ -26,10 +30,7 @@ function love.load()
   
   -- получаем размер окна
   windowWidth, windowHeight = love.graphics.getDimensions()
-  local yCoef = windowHeight / 208
-  
-  print(windowWidth, windowHeight)
-  
+  yCoef = windowHeight / 208
   
   -- создание физического мира
   world = bump.newWorld(16)
@@ -40,9 +41,8 @@ function love.load()
   map:bump_init(world)
   
   -- инициализация игрока на уровне
-  mario = Player:new('mario', 'sprites/mario_low_anim.png', world) -- вызывается функция initialize
+  mario = Player:new('mario', 'anims/mario_low_anim.png', world) -- вызывается функция initialize
   mario:setStartPosition(map.objects)
-  
   
   -- создаем камеру
   camera = Camera()
@@ -57,37 +57,17 @@ function love.load()
   World.static.leftBorder = {x = camPosX, y = camPosY}
   
   -- test information
-  print(camPosX, camPosY)
-  print(camera:cameraCoords(mario.pos.x, mario.pos.y))
-  print(camera:worldCoords(mario.pos.x, mario.pos.y))
+  --print(camPosX, camPosY)
+  print(camera:cameraCoords(camera:position()))
+  print(camera:worldCoords(camera:position()))
   
   -- загружаем шрифт
   local fontSize = windowWidth == 800 and 14 or 16 -- тернарый оператор в действии
   font = love.graphics.newFont("fonts/emulogic.ttf", fontSize)
   love.graphics.setFont(font)
   
-  -- добавляем слой для отрисовки
-  map:addCustomLayer('spriteLayer', 2);
-  
-  local spriteLayer = map.layers.spriteLayer;
-  
-  spriteLayer.sprites = {
-    player = mario
-  }
-  
-  
-  function spriteLayer:update(dt)
-    self.sprites.player:update(dt)
-  end
-
-  function spriteLayer:draw()
-    -- отрисовка текущей анимации
-    mario.animations[mario.currentAnimation]:draw(mario.animations.sprite, mario.pos.x, mario.pos.y)
-    
-    love.graphics.setPointSize(5)
-    love.graphics.points(camera:position())
-    
-  end
+  makePlayerLayout()
+  makeCoinLayout()
 end
 
 -- отрисовка состояния игры на текущий момент времени
@@ -151,5 +131,83 @@ function love.update(dt)
   
   if (x < World.static.leftBorder.x) then
     camera:lookAt(World.static.leftBorder.x, World.static.leftBorder.y)
+  end
+end
+
+-- создание уровня отрисовки с игроком
+function makePlayerLayout()
+  -- добавляем слой для отрисовки
+  map:addCustomLayer('playerLayer', 2);
+  
+  local layer = map.layers.playerLayer;
+  
+  layer.sprites = {
+    player = mario
+  }
+  
+  function layer:update(dt)
+    self.sprites.player:update(dt)
+  end
+
+  function layer:draw()
+    -- отрисовка текущей анимации
+    mario.animations[mario.currentAnimation]:draw(mario.animations.sprite, mario.pos.x, mario.pos.y)
+    
+    love.graphics.setPointSize(5)
+    love.graphics.points(camera:position())
+    
+  end
+end
+
+function makeCoinLayout()
+  map:addCustomLayer('coinLayer', 3);
+  
+  local layer = map.layers.coinLayer;
+  
+  layer.sprites = {
+    coins = {}
+  }
+  
+  for k, object in pairs(map.objects) do
+    if object.name == "Coin" then
+      layer.sprites.coins[object.id] = Coin:new(object, world)
+      
+    end
+  end 
+  
+  function layer:update(dt)
+    local removed = {}
+    
+    
+    --print('mario: ', camera:cameraCoords(camera:position()))
+    --local mx = camera:cameraCoords(camera:position())
+    for _, coin in pairs(self.sprites.coins) do
+      
+      --local camCoordX, camCoordY = camera:cameraCoords(coin.pos.x, coin.pos.y)
+      --print(coin.id, camCoordX - mx)
+      --print('cam: ', camera:cameraCoords(coin.pos.x, coin.pos.y))
+      --print('world: ', camera:worldCoords(coin.pos.x, coin.pos.y))
+      if coin:isVisible(camera, windowWidth, yCoef) then
+        if not coin.isTouched then
+          coin:update(dt)
+        else
+          removed[coin.id] = true
+        end
+      end
+    end
+    
+    for id, obj in pairs(removed) do
+      -- TODO: remove objects from sprites and world
+      world:remove(layer.sprites.coins[id])
+      layer.sprites.coins[id] = nil
+    end
+  end
+  
+  function layer:draw()
+    for _, coin in pairs(self.sprites.coins) do
+      if coin:isVisible(camera, windowWidth, yCoef) then
+        coin.animation.flip:draw(Coin.static.sprite, coin.pos.x, coin.pos.y)
+      end
+    end
   end
 end
