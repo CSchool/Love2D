@@ -8,7 +8,7 @@ return {
   height = 13,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 20,
+  nextobjectid = 21,
   properties = {},
   tilesets = {
     {
@@ -337,6 +337,33 @@ return {
           visible = true,
           properties = {
             ["collidable"] = false
+          }
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "Goombas",
+      visible = false,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {},
+      objects = {
+        {
+          id = 20,
+          name = "Goomba",
+          type = "",
+          shape = "rectangle",
+          x = 416,
+          y = 160,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["direction"] = "right"
           }
         }
       }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="241" height="13" tilewidth="16" tileheight="16" nextobjectid="20">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="241" height="13" tilewidth="16" tileheight="16" nextobjectid="21">
  <tileset firstgid="1" name="tileset_pix" tilewidth="16" tileheight="16" spacing="1" margin="1" tilecount="225" columns="15">
   <image source="../sprites/tileset_pix.png" width="256" height="256"/>
  </tileset>
@@ -119,6 +119,13 @@
   <object id="19" name="Coin" x="304" y="112" width="16" height="16">
    <properties>
     <property name="collidable" type="bool" value="false"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="Goombas" visible="0">
+  <object id="20" name="Goomba" x="416" y="160" width="16" height="16">
+   <properties>
+    <property name="direction" value="right"/>
    </properties>
   </object>
  </objectgroup>

@@ -12,7 +12,7 @@ Player.static.size = 16
 
 -- инициализация объекта Player
 function Player:initialize(name, sprite, collisionWorld)
-  self.name = name
+    self.name = name
   
   -- инициализация анимаций
   self.animations = {}
