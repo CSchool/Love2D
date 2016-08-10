@@ -217,8 +217,23 @@ function makeEnemyLayer()
     end
     
     function layer:update(dt)
+        local dead = {}
+        
         for _, enemy in pairs(self.sprites.enemies) do
             enemy:update(dt)
+            if enemy.isDead then
+                if world:hasItem(enemy) then
+                    world:remove(enemy)
+                end
+                if enemy.canRemove then
+                    dead[enemy.id] = true
+                end
+            end
+        end
+        
+        for id, obj in pairs(dead) do
+            -- TODO: remove objects from sprites and world
+            layer.sprites.enemies[id] = nil
         end
     end
     

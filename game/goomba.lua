@@ -9,11 +9,12 @@ Goomba.static.velocity = 15
 
 -- ходячий гриб - самый простой враг
 function Goomba:initialize(obj, collisionWorld)
-  self.className = 'goomba'
-  self.id = obj.id
-  self.pos = {x = obj.x, y = obj.y, direction = obj.properties.direction}
-  self.animations = {}
-  self.isTouched = false
+    self.className = 'goomba'
+    self.id = obj.id
+    self.pos = {x = obj.x, y = obj.y, direction = obj.properties.direction}
+    self.animations = {}
+    self.isDead = false
+    self.canRemove = false
   
   if not Goomba.static.sprite then
     Goomba.static.sprite = love.graphics.newImage('anims/goomba.png')
@@ -26,8 +27,11 @@ function Goomba:initialize(obj, collisionWorld)
     )
   end
   
-  self.animations.walkRight = anim8.newAnimation(Goomba.static.grid('1-2', 1), 0.5)
-  self.animations.walkLeft = self.animations.walkRight:clone():flipH()
+    self.animations.walkRight = anim8.newAnimation(Goomba.static.grid('1-2', 1), 0.5)
+    self.animations.walkLeft = self.animations.walkRight:clone():flipH()
+    self.animations.dead = anim8.newAnimation(Goomba.static.grid(3, 1), 0.5, 
+      function (anim, loops) anim:pauseAtEnd()  end
+    )
   
   self.collisionWorld = collisionWorld
   
@@ -50,7 +54,9 @@ function Goomba:update(dt)
     local x, y = self.pos.x, self.pos.y
   
     -- передвигаем 
-    self.pos.x, self.pos.y, collisions = self.collisionWorld:move(self, x + dx, y + dy)
+    if (self.collisionWorld:hasItem(self)) then
+        self.pos.x, self.pos.y, collisions = self.collisionWorld:move(self, x + dx, y + dy)
+    end
     
     -- обрабатываем
     if #collisions > 0 then
@@ -63,10 +69,18 @@ function Goomba:update(dt)
     
     -- обновляем анимацию
     self.animations[self:getCurrentAnimation()]:update(dt)
+    
+    if self.animations[self:getCurrentAnimation()].status == "paused" then
+        self.canRemove = true
+    end
 end
 
 function Goomba:getCurrentAnimation()
-    return "walk" .. self.pos.direction:gsub("^%l", string.upper)
+    if not self.isDead then
+        return "walk" .. self.pos.direction:gsub("^%l", string.upper)
+    else
+        return "dead"
+    end
 end
 
 return Goomba
